@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Wolt review form</title>
+  <title>Wolt-style Reviews</title>
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <!-- reCAPTCHA API -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     /* Reset & basic styles */
     * {
@@ -95,15 +97,21 @@
       text-align: center;
       color: #333;
     }
+    /* Центрирование reCAPTCHA */
+    .g-recaptcha {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h2>Wolt review form</h2>
+    <h2>Wolt-style Reviews</h2>
   </header>
 
   <div class="container">
-    <h1>Send your feedback</h1>
+    <h1>Leave a Review</h1>
     <form id="reviewForm">
       <label for="name">Name</label>
       <input type="text" id="name" name="name" placeholder="Your name" required>
@@ -113,7 +121,10 @@
 
       <label for="review">Review</label>
       <textarea id="review" name="review" rows="5" placeholder="Your review" required></textarea>
-
+      
+      <!-- reCAPTCHA widget -->
+      <div class="g-recaptcha" data-sitekey="6LdKPf4qAAAAALi9TPvLM_pn-SQZModCmvXDqrmB"></div>
+      
       <button type="submit">Send</button>
     </form>
     <div id="statusMessage"></div>
@@ -126,21 +137,33 @@
       const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
       const review = document.getElementById('review').value.trim();
+      const recaptchaToken = grecaptcha.getResponse();
 
-      // Insert your deployed Google Apps Script Web App URL here
-      const scriptURL = 'https://script.google.com/macros/s/AKfycbwaY4Hndv17kvifH-ytqx4XVPQTR2WeGCOPoaLg-OxoP-gScTlWQe0tEVlaZx_QdwkKHw/exec';
+      if (!recaptchaToken) {
+        document.getElementById('statusMessage').textContent = 'Please complete the captcha.';
+        return;
+      }
+
+      // Вставьте ваш URL развернутого Web App (Google Apps Script)
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbxVOQR16wVuE9tgNuJ3fbjEp63QbMI_x6ZshYkCeRL705RPtOsuk9deoYEeGdfbuWuhCw/exec';
 
       fetch(scriptURL, {
         method: 'POST',
-        mode: 'no-cors', // For simplicity; configure CORS if you need to read response
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name: name, email: email, review: review })
+        body: JSON.stringify({ 
+          name: name, 
+          email: email, 
+          review: review, 
+          captcha: recaptchaToken 
+        })
       })
       .then(() => {
         document.getElementById('statusMessage').textContent = 'Thank you for your review!';
         document.getElementById('reviewForm').reset();
+        grecaptcha.reset();
       })
       .catch(error => {
         document.getElementById('statusMessage').textContent = 'Submission error: ' + error;
