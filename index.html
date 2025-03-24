@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Wolt-style Reviews</title>
+  <style>
+    /* Минимальная стилизация */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0; padding: 0;
+    }
+    header {
+      background: #fff; padding: 20px; text-align: center; border-bottom: 1px solid #ddd;
+    }
+    .container {
+      max-width: 500px; margin: 30px auto; background: #fff; padding: 20px; border-radius: 8px;
+    }
+    h1 { margin-top: 0; color: #333; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input[type="text"], textarea {
+      width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;
+    }
+    button {
+      margin-top: 20px; padding: 10px 20px; background: #3399ff; color: #fff;
+      border: none; border-radius: 4px; cursor: pointer;
+    }
+    button:hover { background: #1a8cff; }
+    #statusMessage { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Wolt-style Reviews</h2>
+  </header>
+
+  <div class="container">
+    <h1>Оставьте отзыв</h1>
+    <form id="reviewForm">
+      <label for="name">Имя</label>
+      <input type="text" id="name" name="name" placeholder="Ваше имя" required>
+
+      <label for="review">Отзыв</label>
+      <textarea id="review" name="review" rows="5" placeholder="Ваш отзыв" required></textarea>
+
+      <button type="submit">Отправить</button>
+    </form>
+    <div id="statusMessage"></div>
+  </div>
+
+  <script>
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const review = document.getElementById('review').value.trim();
+
+      // ВСТАВЬТЕ СВОЙ URL РАЗВЁРНУТОГО SCRIPT
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbxVOQR16wVuE9tgNuJ3fbjEp63QbMI_x6ZshYkCeRL705RPtOsuk9deoYEeGdfbuWuhCw/exec';
+
+      // Отправляем данные на Google Apps Script
+      fetch(scriptURL, {
+        method: 'POST',
+        // Вариант no-cors (если не настраиваете CORS):
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: name, review: review })
+      })
+      .then(() => {
+        document.getElementById('statusMessage').textContent = 'Спасибо за ваш отзыв!';
+        document.getElementById('reviewForm').reset();
+      })
+      .catch(error => {
+        document.getElementById('statusMessage').textContent = 'Ошибка отправки: ' + error;
+      });
+    });
+  </script>
+</body>
+</html>
