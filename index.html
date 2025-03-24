@@ -1,43 +1,36 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Send your Feedback</title>
-  <!-- Подключаем Google Fonts (пример с Inter) -->
+  <title>Wolt review form</title>
+  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* Сброс базовых отступов */
+    /* Reset & basic styles */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
-    /* Шрифт и общий фон */
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #E2E8F0, #F7FAFC); /* Лёгкий градиент */
+      background: linear-gradient(135deg, #E2E8F0, #F7FAFC);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-
-    /* Шапка */
     header {
-      background: #00A8E8; /* Можно выбрать другой акцентный цвет */
+      background: #00A8E8;
       color: #fff;
       padding: 20px;
       text-align: center;
     }
-
     header h2 {
       font-weight: 600;
       font-size: 1.5rem;
     }
-
-    /* Контейнер формы */
     .container {
       max-width: 500px;
       margin: 40px auto;
@@ -46,7 +39,6 @@
       border-radius: 8px;
       box-shadow: 0 8px 16px rgba(0,0,0,0.05);
     }
-
     h1 {
       margin-bottom: 20px;
       font-size: 1.25rem;
@@ -54,15 +46,14 @@
       font-weight: 600;
       text-align: center;
     }
-
     label {
       display: block;
       margin: 15px 0 5px;
       font-weight: 600;
       color: #555;
     }
-
     input[type="text"],
+    input[type="email"],
     textarea {
       width: 100%;
       padding: 12px;
@@ -71,20 +62,17 @@
       font-size: 1rem;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-
-    /* Анимация при фокусе */
     input[type="text"]:focus,
+    input[type="email"]:focus,
     textarea:focus {
       outline: none;
       border-color: #00A8E8;
       box-shadow: 0 0 0 3px rgba(0,168,232,0.2);
     }
-
     textarea {
-      resize: vertical; /* Можно менять размер поля по вертикали */
+      resize: vertical;
       min-height: 80px;
     }
-
     button {
       display: inline-block;
       margin-top: 20px;
@@ -98,11 +86,9 @@
       font-weight: 600;
       transition: background 0.2s;
     }
-
     button:hover {
       background: #008DC3;
     }
-
     #statusMessage {
       margin-top: 20px;
       font-weight: 600;
@@ -113,17 +99,20 @@
 </head>
 <body>
   <header>
-    <h2>Send your Feedback</h2>
+    <h2>Wolt review form</h2>
   </header>
 
   <div class="container">
     <h1>Send your feedback</h1>
     <form id="reviewForm">
-      <label for="name">Your name</label>
+      <label for="name">Name</label>
       <input type="text" id="name" name="name" placeholder="Your name" required>
 
-      <label for="review">Feedback</label>
-      <textarea id="review" name="review" rows="5" placeholder="Your feedback" required></textarea>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Your email" required>
+
+      <label for="review">Review</label>
+      <textarea id="review" name="review" rows="5" placeholder="Your review" required></textarea>
 
       <button type="submit">Send</button>
     </form>
@@ -135,26 +124,26 @@
       e.preventDefault();
 
       const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
       const review = document.getElementById('review').value.trim();
 
-      // ВСТАВЬТЕ СВОЙ URL РАЗВЁРНУТОГО SCRIPT
-      const scriptURL = 'https://script.google.com/macros/s/AKfycbxVOQR16wVuE9tgNuJ3fbjEp63QbMI_x6ZshYkCeRL705RPtOsuk9deoYEeGdfbuWuhCw/exec';
+      // Insert your deployed Google Apps Script Web App URL here
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbwaY4Hndv17kvifH-ytqx4XVPQTR2WeGCOPoaLg-OxoP-gScTlWQe0tEVlaZx_QdwkKHw/exec';
 
-      // Отправляем данные на Google Apps Script
       fetch(scriptURL, {
         method: 'POST',
-        mode: 'no-cors',
+        mode: 'no-cors', // For simplicity; configure CORS if you need to read response
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name: name, review: review })
+        body: JSON.stringify({ name: name, email: email, review: review })
       })
       .then(() => {
-        document.getElementById('statusMessage').textContent = 'Thanks for your feedback!';
+        document.getElementById('statusMessage').textContent = 'Thank you for your review!';
         document.getElementById('reviewForm').reset();
       })
       .catch(error => {
-        document.getElementById('statusMessage').textContent = 'Error: ' + error;
+        document.getElementById('statusMessage').textContent = 'Submission error: ' + error;
       });
     });
   </script>
