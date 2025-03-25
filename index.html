@@ -56,7 +56,8 @@
     }
     input[type="text"],
     input[type="email"],
-    textarea {
+    textarea,
+    input[type="file"] {
       width: 100%;
       padding: 12px;
       border: 1px solid #ccc;
@@ -66,7 +67,8 @@
     }
     input[type="text"]:focus,
     input[type="email"]:focus,
-    textarea:focus {
+    textarea:focus,
+    input[type="file"]:focus {
       outline: none;
       border-color: #00A8E8;
       box-shadow: 0 0 0 3px rgba(0,168,232,0.2);
@@ -122,6 +124,10 @@
       <label for="review">Review</label>
       <textarea id="review" name="review" rows="5" placeholder="Your review" required></textarea>
       
+      <!-- Поле для загрузки видео (опционально) -->
+      <label for="video">Upload Video (optional)</label>
+      <input type="file" id="video" name="video" accept="video/*">
+
       <!-- reCAPTCHA widget -->
       <div class="g-recaptcha" data-sitekey="6LcKQf4qAAAAAEVeL_EKgRZ0zUm9XT69FnKZ96va"></div>
       
@@ -133,36 +139,30 @@
   <script>
     document.getElementById('reviewForm').addEventListener('submit', function(e) {
       e.preventDefault();
-
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const review = document.getElementById('review').value.trim();
+      
+      // Проверяем, что captcha пройдена
       const recaptchaToken = grecaptcha.getResponse();
-
       if (!recaptchaToken) {
         document.getElementById('statusMessage').textContent = 'Please complete the captcha.';
         return;
       }
+      
+      // Создаем объект FormData из формы
+      const form = document.getElementById('reviewForm');
+      const formData = new FormData(form);
+      // Добавляем токен reCAPTCHA
+      formData.append('captcha', recaptchaToken);
 
-      // Вставьте ваш URL развернутого Web App (Google Apps Script)
+      // URL вашего Google Apps Script Web App
       const scriptURL = 'https://script.google.com/macros/s/AKfycbzduKTrHNeXbe0OnsBP-S2dsex2XCTWYDPf6zAbVS5caB2rLoQoGu6Rt0XIU8-2oxAYbg/exec';
 
       fetch(scriptURL, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 
-          name: name, 
-          email: email, 
-          review: review, 
-          captcha: recaptchaToken 
-        })
+        body: formData
       })
       .then(() => {
         document.getElementById('statusMessage').textContent = 'Thank you for your review!';
-        document.getElementById('reviewForm').reset();
+        form.reset();
         grecaptcha.reset();
       })
       .catch(error => {
